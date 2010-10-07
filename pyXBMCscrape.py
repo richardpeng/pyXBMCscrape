@@ -9,7 +9,7 @@
 """
 
 __author__ = "Richard Peng"
-__version__ = "0.2"
+__version__ = "0.2.1"
 
 import sys
 import re
@@ -272,11 +272,11 @@ class tmdbArt:
             return None
         if interactive:
             for image in images:
-                print images.index(image), image['original']
+                print images.index(image), os.path.splitext(image['original'])[0] + ".jpg"
             sel = prompt_sel(images, arttype)
         else:
             sel = 0
-        return images[sel]['original']
+        return os.path.splitext(images[sel]['original'])[0] + ".jpg"
     
     def get_artpath(self, filename, url, arttype):
         folder = os.path.dirname(filename)
@@ -310,11 +310,11 @@ if __name__ == '__main__':
     parser.add_option("-i", action="store_true", dest="interactive", default=False,
                         help="Interactively choose poster and backdrop")
     parser.add_option("-r", action="store_true", dest="rescrape", default=False,
-                        help="Rescrape files and images")
+                        help="Rescrape nfo files and art")
     parser.add_option("--no-nfo", action="store_true", dest="no_imdb", default=False,
-                        help="Do not fetch or create nfo")
+                        help="Do not fetch IMDB or create nfo")
     parser.add_option("--no-art", action="store_true", dest="no_tmdb", default=False,
-                        help="Do not fetch art")
+                        help="Do not fetch TMDB art")
     parser.add_option("--imdb", dest="imdbid",
                         help="Specify the IMDB ID to scrape")
     parser.add_option("--tmdb", dest="tmdbid",
