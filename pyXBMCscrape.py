@@ -9,7 +9,7 @@
 """
 
 __author__ = "Richard Peng"
-__version__ = "0.1"
+__version__ = "0.2"
 
 import sys
 import re
@@ -259,6 +259,9 @@ class tmdbArt:
                     self.save_art(backdropurl, backdroppath)
             else:
                 print "No backdrops found"
+                
+            if options.allart:
+                self.save_all_fanart(filename, self.rawmovie['images'].backdrops)
 
     def get_url(self, movie, arttype, interactive):
         if arttype == "poster":
@@ -278,15 +281,28 @@ class tmdbArt:
     def get_artpath(self, filename, url, arttype):
         folder = os.path.dirname(filename)
         shortname = os.path.splitext(os.path.basename(filename))[0]
-        ext = os.path.splitext(url)[1]
         if arttype == "backdrop":
-            return os.path.join(folder,"%s-fanart%s") % (shortname, ext)
+            return os.path.join(folder,"%s-fanart.jpg") % shortname
         elif arttype == "poster":
             return os.path.join(folder,"%s.tbn") % shortname
 
-    def save_art(self, url,dest):
+    def save_art(self, url, dest):
         print dest
-        urllib.urlretrieve(url,dest)
+        urllib.urlretrieve(url, dest)
+    
+    def save_all_fanart(self, filename, images):
+        print "Fetching extra art"
+        folder = os.path.dirname(filename)
+        extrafolder = os.path.join(folder, "extrafanart")
+        if not os.path.exists(extrafolder):
+            os.mkdir(extrafolder)
+        for image in images:
+            index = images.index(image) + 1
+            imagepath = self.get_artpath(filename, image['original'], "backdrop")
+            base = os.path.splitext(imagepath)[0]
+            url = os.path.splitext(image['original'])[0] + ".jpg"
+            dest = os.path.join(extrafolder, "%s%s.jpg") % (base, index)
+            self.save_art(url, dest)
 
 if __name__ == '__main__':
     usage = "usage: %prog [options] filenames"
@@ -303,6 +319,8 @@ if __name__ == '__main__':
                         help="Specify the IMDB ID to scrape")
     parser.add_option("--tmdb", dest="tmdbid",
                         help="Specify the TMDB ID to fetch art")
+    parser.add_option("--all-art", action="store_true", dest="allart", default=False,
+                        help="Fetch all available backdrops")
     (options, args) = parser.parse_args()
     
     for filename in args:
