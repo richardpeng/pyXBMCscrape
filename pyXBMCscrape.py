@@ -285,7 +285,8 @@ class tmdbArt:
         urllib.urlretrieve(url,dest)
 
 if __name__ == '__main__':
-    parser = OptionParser()
+    usage = "usage: %prog [options] filenames"
+    parser = OptionParser(usage=usage)
     parser.add_option("-i", action="store_true", dest="interactive", default=False,
                         help="Interactively choose poster and backdrop")
     parser.add_option("-r", action="store_true", dest="rescrape", default=False,
