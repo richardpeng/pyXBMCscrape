@@ -291,11 +291,10 @@ class tmdbArt:
         urllib.urlretrieve(url, dest)
     
     def save_all_fanart(self, filename, images):
+        print "Fetching extra art"
         abspath = os.path.abspath(filename)
         folder = os.path.dirname(abspath)
-        print "Fetching extra art"
         extrafolder = os.path.join(folder, "extrafanart")
-        print "extra:", extrafolder
         if not os.path.exists(extrafolder):
             os.mkdir(extrafolder)
         for image in images:
