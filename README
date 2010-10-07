@@ -1,11 +1,33 @@
-To use this script, you'll need a few non-standard python libraries:
+pyXBMCscrape README
+------------------------------------
+
+QUICK INSTALLATION:
+Extract the script files to your hard drive
+Install Dependencies:
+sudo apt-get install python-imdbpy python-lxml
+
+BASIC USAGE:
+pyXBMCscrape.py filename # scrape filename
+pyXBMCscrape.py -h # print help
+
+DEPENDENCIES:
 IMDbPY: http://imdbpy.sourceforge.net/
 themoviedb: http://github.com/dbr/themoviedb (included with script)
 lxml: http://codespeak.net/lxml/
 
-Install: sudo apt-get install python-imdbpy python-lxml
+------------------------------------
 
-Help:
-Basic Usage: pyXBMCscrape.py filename
+RELEASE NOTES:
 
-To print a list of command line parameters: pyXBMCscrape.py -h
+v0.1:
+- Initial release
+
+------------------------------------
+
+COPYRIGHTS:
+
+themoviedb python wrapper:
+Code taken from themoviedb
+implemented by dbr/Ben
+
+all the rest is written 2010 by Richard Peng
