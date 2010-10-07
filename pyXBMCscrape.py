@@ -9,7 +9,7 @@
 """
 
 __author__ = "Richard Peng"
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 import sys
 import re
@@ -291,15 +291,17 @@ class tmdbArt:
         urllib.urlretrieve(url, dest)
     
     def save_all_fanart(self, filename, images):
+        abspath = os.path.abspath(filename)
+        folder = os.path.dirname(abspath)
         print "Fetching extra art"
-        folder = os.path.dirname(filename)
         extrafolder = os.path.join(folder, "extrafanart")
+        print "extra:", extrafolder
         if not os.path.exists(extrafolder):
             os.mkdir(extrafolder)
         for image in images:
             index = images.index(image) + 1
             imagepath = self.get_artpath(filename, image['original'], "backdrop")
-            base = os.path.splitext(imagepath)[0]
+            base = os.path.splitext(os.path.basename(imagepath))[0]
             url = os.path.splitext(image['original'])[0] + ".jpg"
             dest = os.path.join(extrafolder, "%s%s.jpg") % (base, index)
             self.save_art(url, dest)
