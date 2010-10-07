@@ -300,9 +300,10 @@ class tmdbArt:
         for image in images:
             index = images.index(image) + 1
             imagepath = self.get_artpath(filename, image['original'], "backdrop")
-            base = os.path.splitext(os.path.basename(imagepath))[0]
+            #base = os.path.splitext(os.path.basename(imagepath))[0]
+            #dest = os.path.join(extrafolder, "%s%s.jpg") % (base, index)
+            dest = os.path.join(extrafolder, "fanart%s.jpg") % index
             url = os.path.splitext(image['original'])[0] + ".jpg"
-            dest = os.path.join(extrafolder, "%s%s.jpg") % (base, index)
             self.save_art(url, dest)
 
 if __name__ == '__main__':
