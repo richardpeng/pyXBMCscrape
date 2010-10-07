@@ -19,6 +19,9 @@ lxml: http://codespeak.net/lxml/
 
 RELEASE NOTES:
 
+v0.2:
+- Fetch all extra fanart: --all-art
+
 v0.1:
 - Initial release
 
