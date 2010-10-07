@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#author: Richard Peng
+#project: pyXBMCscrape
+#repository: http://github.com/richardpeng/pyXBMCscrape
+#license: GPLv3 http://www.gnu.org/licenses/gpl.txt
 
 """An nfo scraper and art fetcher for XBMC
 """
