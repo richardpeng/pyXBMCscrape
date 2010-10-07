@@ -9,7 +9,7 @@
 """
 
 __author__ = "Richard Peng"
-__version__ = "0.3"
+__version__ = "0.3.1"
 
 import sys
 import re
