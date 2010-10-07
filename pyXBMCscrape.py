@@ -9,7 +9,7 @@
 """
 
 __author__ = "Richard Peng"
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 
 import sys
 import re
@@ -120,7 +120,7 @@ class XbmcXML:
             else:
                 self.rawmovie = self.getmovie(movieID)
                 self.title = self.rawmovie['title']
-                if movieID == oldID:
+                if movieID == oldID or mismatch(moviename, self.title):
                     titles = [self.title]
                     for name in self.rawmovie['akas']:
                         if len(name.split(" - ")) == 2:
