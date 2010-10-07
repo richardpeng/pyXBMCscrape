@@ -40,6 +40,7 @@ class XbmcXML:
                 self.getIMDB(options.imdbid)
             else:
                 self.searchIMDB(self.filename)
+            self.write()
     
     def parseIMDB(self, movie):
         print "Scraping:", self.title
@@ -311,12 +312,11 @@ def scrape_movie(path, options):
         if os.path.exists(path):
             if not options.no_imdb:
                 #IMDB
-                xbmc = XbmcXML(path, options)
-                xbmc.write()
+                XbmcXML(path, options)
 
             if not options.no_tmdb:
                 #TMDB
-                art = tmdbArt(path, options)
+                tmdbArt(path, options)
         else:
             print "File not found: %s" % filename
     else:
@@ -347,6 +347,8 @@ def setup_options():
                         help="Interactively choose poster and backdrop")
     parser.add_option("-r", action="store_true", dest="rescrape", default=False,
                         help="Rescrape nfo files and art")
+    parser.add_option("-R", action="store_true", dest="recurse", default=False,
+                        help="Recurse into subdirectories")
     parser.add_option("--no-nfo", action="store_true", dest="no_imdb", default=False,
                         help="Do not fetch IMDB or create nfo")
     parser.add_option("--no-art", action="store_true", dest="no_tmdb", default=False,
@@ -357,8 +359,6 @@ def setup_options():
                         help="Specify the TMDB ID to fetch art")
     parser.add_option("--all-art", action="store_true", dest="allart", default=False,
                         help="Fetch all available backdrops")
-    parser.add_option("-R", action="store_true", dest="recurse", default=False,
-                        help="Recurse into subdirectories")
     return parser.parse_args()
 
 if __name__ == '__main__':
