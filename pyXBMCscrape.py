@@ -9,7 +9,7 @@
 """
 
 __author__ = "Richard Peng"
-__version__ = "0.2.3"
+__version__ = "0.3"
 
 import sys
 import re
@@ -155,65 +155,6 @@ class XbmcXML:
         with codecs.open(self.nfopath, 'w', 'utf-8') as nfo:
             nfo.write(self.tostring())
 
-def get_moviename(filename):
-    # remove file extension
-    name = os.path.splitext(os.path.basename(filename))[0]
-    # remove periods and underscores
-    name = re.sub('[\._]',' ',name)
-    # list of common tags in filenames
-    reg = re.compile(TAGS, re.IGNORECASE)
-    # remove common tags
-    name = re.sub(reg,'',name).strip()
-    # remove the year
-    name = re.sub('\d{4}$','',name).strip()
-    # return the cleaned-up movie name
-    return name
-
-def mismatch(orig, search):
-    if len(difflib.get_close_matches(orig, [search])) == 0:
-        return True
-    else:
-        regex = re.compile('(I+|\d+)$')
-        sequel = re.search(regex, orig)
-        search_sequel = re.search(regex, search)
-        if not sequel and not search_sequel:
-            return False
-        else:
-            if sequel and search_sequel:
-                if sequel.group(0) == search_sequel.group(0):
-                    return False
-                else:
-                    return True
-            else:
-                return True
-                
-def prompt_sel(sellist, seltype):
-    num = len(sellist) - 1
-    while True:
-        sel = raw_input("Pick a " + seltype + " [0]: ")
-        try:
-            if sel == "":
-                return 0
-            elif int(sel) > num or int(sel) < 0:
-                raise IndexError
-            else:
-                return int(sel)
-        except (IndexError, ValueError):
-            print "Enter a value from 0-" + str(num)
-        
-def prompt_mm(db, movieID):
-    while True:
-        prompt = "Input the correct %s ID [%s]: " % (db, movieID)
-        newID = raw_input(prompt)
-        if newID == "" and movieID:
-            return movieID
-        elif newID == "-1":
-            return newID
-        elif db == "imdb" and re.match('\d{7}',newID):
-            return newID
-        elif db == "tmdb" and re.match('\d+',newID):
-            return newID
-
 class tmdbArt:
     def __init__(self, filename, options):
         moviename = get_moviename(filename)
@@ -306,7 +247,100 @@ class tmdbArt:
             url = os.path.splitext(image['original'])[0] + ".jpg"
             self.save_art(url, dest)
 
-if __name__ == '__main__':
+def get_moviename(filename):
+    # remove file extension
+    name = os.path.splitext(os.path.basename(filename))[0]
+    # remove periods and underscores
+    name = re.sub('[\._]',' ',name)
+    # list of common tags in filenames
+    reg = re.compile(TAGS, re.IGNORECASE)
+    # remove common tags
+    name = re.sub(reg,'',name).strip()
+    # remove the year
+    name = re.sub('\d{4}$','',name).strip()
+    # return the cleaned-up movie name
+    return name
+
+def mismatch(orig, search):
+    if len(difflib.get_close_matches(orig, [search])) == 0:
+        return True
+    else:
+        regex = re.compile('(I+|\d+)$')
+        sequel = re.search(regex, orig)
+        search_sequel = re.search(regex, search)
+        if not sequel and not search_sequel:
+            return False
+        else:
+            if sequel and search_sequel:
+                if sequel.group(0) == search_sequel.group(0):
+                    return False
+                else:
+                    return True
+            else:
+                return True
+                
+def prompt_sel(sellist, seltype):
+    num = len(sellist) - 1
+    while True:
+        sel = raw_input("Pick a " + seltype + " [0]: ")
+        try:
+            if sel == "":
+                return 0
+            elif int(sel) > num or int(sel) < 0:
+                raise IndexError
+            else:
+                return int(sel)
+        except (IndexError, ValueError):
+            print "Enter a value from 0-" + str(num)
+        
+def prompt_mm(db, movieID):
+    while True:
+        prompt = "Input the correct %s ID [%s]: " % (db, movieID)
+        newID = raw_input(prompt)
+        if newID == "" and movieID:
+            return movieID
+        elif newID == "-1":
+            return newID
+        elif db == "imdb" and re.match('\d{7}',newID):
+            return newID
+        elif db == "tmdb" and re.match('\d+',newID):
+            return newID
+
+def scrape_movie(path, options):
+    if is_video(path):
+        if os.path.exists(path):
+            if not options.no_imdb:
+                #IMDB
+                xbmc = XbmcXML(path, options)
+                xbmc.write()
+
+            if not options.no_tmdb:
+                #TMDB
+                art = tmdbArt(path, options)
+        else:
+            print "File not found: %s" % filename
+    else:
+        print "Not a movie file:", filename
+            
+def do_scrape(paths, options):
+    for path in paths:
+        abspath = os.path.abspath(path)
+        if os.path.isdir(abspath) and options.recurse:
+            for root, dirs, files in os.walk(abspath):
+                for filename in files:
+                    if is_video(filename):
+                        scrape_movie(os.path.join(root, filename), options)
+        elif is_video(abspath):
+            scrape_movie(abspath, options)
+
+def is_video(filename):
+    fileext = os.path.splitext(filename)[1]
+    if fileext in ['.mkv', '.avi', '.mp4']:
+        return True
+    else:
+        return False
+        
+def setup_options():
     usage = "usage: %prog [options] filenames"
     parser = OptionParser(usage=usage)
     parser.add_option("-i", action="store_true", dest="interactive", default=False,
@@ -323,21 +357,10 @@ if __name__ == '__main__':
                         help="Specify the TMDB ID to fetch art")
     parser.add_option("--all-art", action="store_true", dest="allart", default=False,
                         help="Fetch all available backdrops")
-    (options, args) = parser.parse_args()
-    
-    for filename in args:
-        fileext = os.path.splitext(filename)[1]
-        if fileext in ['.mkv', '.avi', '.mp4']:
-            if os.path.exists(filename):
-                if not options.no_imdb:
-                    #IMDB
-                    xbmc = XbmcXML(filename, options)
-                    xbmc.write()
+    parser.add_option("-R", action="store_true", dest="recurse", default=False,
+                        help="Recurse into subdirectories")
+    return parser.parse_args()
 
-                if not options.no_tmdb:
-                    #TMDB
-                    art = tmdbArt(filename, options)
-            else:
-                print "File not found: %s" % filename
-        else:
-            print "Not a movie file:", filename
+if __name__ == '__main__':
+    (options, paths) = setup_options()
+    do_scrape(paths, options)

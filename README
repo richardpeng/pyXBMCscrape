@@ -19,6 +19,9 @@ lxml: http://codespeak.net/lxml/
 
 RELEASE NOTES:
 
+v0.3:
+- scrape recursively: -R
+
 v0.2:
 - Fetch all extra fanart: --all-art
 
