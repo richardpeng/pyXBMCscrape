@@ -1,12 +1,9 @@
 To use this script, you'll need a few non-standard python libraries:
 IMDbPY: http://imdbpy.sourceforge.net/
-Installation: sudo apt-get install python-imdbpy
-
-themoviedb: http://github.com/dbr/themoviedb
-Installation: a copy of the module is included pyXBMCscrape, just unzip it to the same folder as the script
-
+themoviedb: http://github.com/dbr/themoviedb (included with script)
 lxml: http://codespeak.net/lxml/
-Installation: sudo apt-get install python-lxml
+
+Install: sudo apt-get install python-imdbpy python-lxml
 
 Help:
 Basic Usage: pyXBMCscrape.py filename
